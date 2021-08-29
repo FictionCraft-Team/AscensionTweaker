@@ -1,0 +1,4 @@
+{
+  "ascensiontweaker.error.skillNotFound": "§cSkill %s §cin %s §cconfig not found!",
+  "ascensiontweaker.tooltips.itemRequirementNotMet": "You need to be at least level %s in %s to use this item!"
+}
