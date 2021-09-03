@@ -5,12 +5,14 @@ import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOALevelP
 import fictioncraft.wintersteve25.ascensiontweaker.events.ServerEventsHandler;
 import fictioncraft.wintersteve25.fclib.api.json.objects.ProviderType;
 import fictioncraft.wintersteve25.fclib.api.json.utils.JsonUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.tslat.aoa3.util.constant.Skills;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.jmx.Server;
 
 @Mod(AscensionTweaker.MODID)
 public class AscensionTweaker {
@@ -47,8 +49,8 @@ public class AscensionTweaker {
         MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::blockInteractionEvent);
         MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::blockHarvestEvent);
         MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::enterDimensionEvent);
-        MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::playerTick);
         MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::fillBucketEvent);
         MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::onJsonReload);
+        MinecraftForge.EVENT_BUS.addListener(ServerEventsHandler::playerTick);
     }
 }

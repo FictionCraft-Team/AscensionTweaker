@@ -15,6 +15,7 @@ import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.*;
 import fictioncraft.wintersteve25.fclib.common.helper.MiscHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -28,9 +29,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -97,6 +98,8 @@ public class ServerEventsHandler {
         itemUse = configMap.getConfig().get(AscensionTweaker.ITEM_USE);
 
         PlayerEntity player = event.player;
+        PlayerInventory inventory = player.inventory;
+
         if (basicChecks(itemUse, player)) {
             for (SimpleAOAConfigObject cfg : itemUse) {
                 SimpleObjProvider objProvider = cfg.getTarget();
@@ -105,14 +108,24 @@ public class ServerEventsHandler {
                 if (objProvider instanceof SimpleItemProvider) {
                     SimpleItemProvider itemProvider = (SimpleItemProvider) objProvider;
                     ItemStack heldItem = player.getHeldItemMainhand();
-                    if (ItemStackSerializer.doesItemStackMatch(heldItem, itemProvider)) {
-                        if (!SkillSerializer.areConditionsMet(player, levelProvider, UID)) {
-                            Skills skill = SkillSerializer.getSkillFromJson(levelProvider);
-                            int level = levelProvider.getLevel();
+                    if (!SkillSerializer.areConditionsMet(player, levelProvider, UID)) {
+                        Skills skill = SkillSerializer.getSkillFromJson(levelProvider);
+                        int level = levelProvider.getLevel();
 
+                        if (ItemStackSerializer.doesItemStackMatch(heldItem, itemProvider)) {
                             player.dropItem(heldItem.copy(), true);
                             PlayerUtil.notifyPlayerOfInsufficientLevel((ServerPlayerEntity) player, skill, level);
                             heldItem.shrink(heldItem.getCount());
+                        }
+
+                        for (ItemStack stacks : inventory.armorInventory) {
+                            if (!stacks.isEmpty()) {
+                                if (ItemStackSerializer.doesItemStackMatch(stacks, itemProvider)) {
+                                    inventory.placeItemBackInInventory(player.getEntityWorld(), stacks.copy());
+                                    stacks.shrink(stacks.getCount());
+                                    PlayerUtil.notifyPlayerOfInsufficientLevel((ServerPlayerEntity) player, skill, level);
+                                }
+                            }
                         }
                     }
                 }

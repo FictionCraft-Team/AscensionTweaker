@@ -1,4 +1,4 @@
 {
-  "ascensiontweaker.error.skillNotFound": "%s技巧不存在",
-  "ascensiontweaker.tooltips.itemRequirementNotMet": "You need to be at least level §4%s in §4%s to use this item!"
+  "ascensiontweaker.error.skillNotFound": "%s§c技巧不存在",
+  "ascensiontweaker.tooltips.itemRequirementNotMet": "§c需要%s%s等级"
 }
