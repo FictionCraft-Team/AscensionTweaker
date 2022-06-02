@@ -8,11 +8,11 @@ import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOALevelP
 import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOAMap;
 import fictioncraft.wintersteve25.fclib.api.json.base.IJsonConfig;
 import fictioncraft.wintersteve25.fclib.api.json.objects.SimpleObjectMap;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.*;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleBlockProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleEntityProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleFluidProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleItemProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.SimpleObjProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleBlockProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleEntityProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleFluidProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleItemProvider;
 import fictioncraft.wintersteve25.fclib.api.json.utils.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -29,8 +29,8 @@ public class MainConfig implements IJsonConfig {
 
     public SimpleAOAMap configData;
 
-    private final File configFile = JsonUtils.getConfigFile(this.UID().getNamespace(), false);
-    private final File exampleFile = JsonUtils.getConfigFile(this.UID().getNamespace(), true);
+    private final File configFile = getDefaultFile();
+    private final File exampleFile = getDefaultExample();
 
     private static final SimpleAOAConfigObject ENTITY_CONFIG_OBJECT = new SimpleAOAConfigObject(new SimpleEntityProvider("minecraft:enderman", false), new SimpleAOALevelProvider("HUNTER", 10));
     private static final SimpleAOAConfigObject BLOCK_CONFIG_OBJECT = new SimpleAOAConfigObject(new SimpleBlockProvider("minecraft:diamond_ore", false, "", false), new SimpleAOALevelProvider("EXTRACTION", 4));
@@ -38,7 +38,7 @@ public class MainConfig implements IJsonConfig {
     private static final SimpleAOAConfigObject FLUID_CONFIG_OBJECT = new SimpleAOAConfigObject(new SimpleFluidProvider("minecraft:lava", 1000, "", false), new SimpleAOALevelProvider("ENGINEERING", 2));
     private static final SimpleAOAConfigObject DIMENSION_CONFIG_OBJECT = new SimpleAOAConfigObject(new SimpleObjProvider("minecraft:nether", false, "Dimensions"), new SimpleAOALevelProvider("HUNTER", 5));
 
-    public static final Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    public static final Gson gson = JsonUtils.getGson();
 
     @Override
     public void write() {

@@ -84,7 +84,7 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.0'
     compile fg.deobf("curse.maven:aoa-311054:3378340")
-    compile fg.deobf("curse.maven:fclib-497404:3442365")
+    compile fg.deobf("curse.maven:fclib-497404:3567946")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65")
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.65:api")
     compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")

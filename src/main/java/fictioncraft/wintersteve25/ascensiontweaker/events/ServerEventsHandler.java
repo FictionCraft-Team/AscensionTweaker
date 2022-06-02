@@ -1,17 +1,21 @@
 package fictioncraft.wintersteve25.ascensiontweaker.events;
 
 import fictioncraft.wintersteve25.ascensiontweaker.AscensionTweaker;
+import fictioncraft.wintersteve25.ascensiontweaker.config.MainConfig;
+import fictioncraft.wintersteve25.ascensiontweaker.config.SkillSerializer;
 import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOAConfigObject;
 import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOALevelProvider;
 import fictioncraft.wintersteve25.ascensiontweaker.config.object.SimpleAOAMap;
-import fictioncraft.wintersteve25.ascensiontweaker.config.SkillSerializer;
 import fictioncraft.wintersteve25.fclib.api.events.JsonConfigEvent;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.SimpleObjProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleBlockProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleEntityProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleFluidProvider;
-import fictioncraft.wintersteve25.fclib.api.json.objects.providers.templates.SimpleItemProvider;
-import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.*;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.SimpleObjProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleBlockProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleEntityProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleFluidProvider;
+import fictioncraft.wintersteve25.fclib.api.json.objects.providers.obj.templates.SimpleItemProvider;
+import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.BlockSerializer;
+import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.EntitySerialization;
+import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.FluidSerializer;
+import fictioncraft.wintersteve25.fclib.api.json.utils.JsonSerializer.ItemStackSerializer;
 import fictioncraft.wintersteve25.fclib.common.helper.MiscHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,9 +33,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.item.ItemExpireEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -42,8 +46,10 @@ import java.util.List;
 
 public class ServerEventsHandler {
 
-    public static final ResourceLocation UID = AscensionTweaker.CONFIG.UID();
-    public static SimpleAOAMap configMap = AscensionTweaker.CONFIG.configData;
+    public static MainConfig CONFIG;
+
+    public static ResourceLocation UID;
+    public static SimpleAOAMap configMap;
     private static List<SimpleAOAConfigObject> mobAttack;
     public static List<SimpleAOAConfigObject> itemUse;
     private static List<SimpleAOAConfigObject> blockPlacement;
@@ -54,15 +60,23 @@ public class ServerEventsHandler {
 
     public static void onJsonReload(JsonConfigEvent.Post event) {
         if (event.getStage() == JsonConfigEvent.JsonConfigLoadStages.READ) {
-            configMap = AscensionTweaker.CONFIG.configData;
-            mobAttack = configMap.getConfig().get(AscensionTweaker.MOB_ATTACK);
-            itemUse = configMap.getConfig().get(AscensionTweaker.ITEM_USE);
-            blockPlacement = configMap.getConfig().get(AscensionTweaker.BLOCK_PLACEMENT);
-            blockInteraction = configMap.getConfig().get(AscensionTweaker.BLOCK_INTERACTION);
-            blockHarvest = configMap.getConfig().get(AscensionTweaker.BLOCK_HARVEST);
-            enterDim = configMap.getConfig().get(AscensionTweaker.ENTER_DIMENSION);
-            pickupFluid = configMap.getConfig().get(AscensionTweaker.PICKUP_FLUID);
+            UID = CONFIG.UID();
+            configMap = CONFIG.configData;
+            if (configMap != null) {
+                mobAttack = configMap.getConfig().get(AscensionTweaker.MOB_ATTACK);
+                itemUse = configMap.getConfig().get(AscensionTweaker.ITEM_USE);
+                blockPlacement = configMap.getConfig().get(AscensionTweaker.BLOCK_PLACEMENT);
+                blockInteraction = configMap.getConfig().get(AscensionTweaker.BLOCK_INTERACTION);
+                blockHarvest = configMap.getConfig().get(AscensionTweaker.BLOCK_HARVEST);
+                enterDim = configMap.getConfig().get(AscensionTweaker.ENTER_DIMENSION);
+                pickupFluid = configMap.getConfig().get(AscensionTweaker.PICKUP_FLUID);
+            }
         }
+    }
+
+    public static void onJsonCreate(JsonConfigEvent.Registration event) {
+        CONFIG = new MainConfig();
+        event.getManager().registerConfig(CONFIG);
     }
 
     public static void mobHurtEvent(AttackEntityEvent event) {
